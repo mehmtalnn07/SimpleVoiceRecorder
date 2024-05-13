@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">VoiceRecorder</string>
+    <string name="recorder">Ses kaydedici</string>
+    <string name="list">Liste</string>
+    <string name="file_name">Dosya adı</string>
+    <string name="enter_file_name">Dosya adını gir</string>
+    <string name="okay">Tamam</string>
+    <string name="cancel">İptal</string>
+    <string name="delete_file">Dosyayı sil</string>
+    <string name="delete_file_question">Dosyayı silmek istediğine emin misin?</string>
+    <string name="delete">Sil</string>
+    <string name="voice_list">Ses kayıtları</string>
+    <string name="empty_list">Ses kaydınız bulunmamaktadır</string>
 </resources>

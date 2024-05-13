@@ -4,26 +4,17 @@ import android.Manifest
 
 import android.content.pm.PackageManager
 import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Pause
-import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.IconButton
@@ -45,25 +36,23 @@ import com.mehmetalan.voicerecorder.R
 import java.io.File
 import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
-import kotlin.math.sin
 
 @Composable
 fun AudioRecorderApp(
     navController: NavHostController
 ) {
     val context = LocalContext.current
-    val activity = context as? ComponentActivity // ComponentActivity'ye erişim
+    val activity = context as? ComponentActivity
 
     val audioRecorder = remember { AudioRecorder(context) }
     var isRecording by remember { mutableStateOf(false) }
-    var isPlaying by remember { mutableStateOf(false) }
     var recordedFiles by remember { mutableStateOf(emptyList<File>()) }
     var showDialog by remember { mutableStateOf(false) }
     var fileName by remember { mutableStateOf("") }
     var fileToDelete by remember { mutableStateOf<File?>(null) }
 
-    // İzin kontrolü ve gerekirse izin istemek için yardımcı fonksiyon
     fun requestPermission() {
         val hasPermission = ContextCompat.checkSelfPermission(
             context,
@@ -71,13 +60,12 @@ fun AudioRecorderApp(
         ) == PackageManager.PERMISSION_GRANTED
 
         if (!hasPermission && activity != null) {
-            // İzin isteme için standart Activity API'sini kullanarak izin isteyin
             activity.requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), 0)
         }
     }
 
     LaunchedEffect(Unit) {
-        recordedFiles = audioRecorder.getRecordedFiles() // Kaydedilen dosyaları yükle
+        recordedFiles = audioRecorder.getRecordedFiles()
     }
     Column(
         modifier = Modifier
@@ -91,14 +79,16 @@ fun AudioRecorderApp(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Ses kaydedici")
+            Text(
+                text = stringResource(id = R.string.recorder)
+            )
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Liste",
+                    text = stringResource(id = R.string.list),
                     modifier = Modifier
                         .clickable {
                             navController.navigate(route = "voiceList")
@@ -142,25 +132,18 @@ fun AudioRecorderApp(
                             }
                             isRecording = !isRecording
                         }
-                        /*if (!isRecording) {
-                            requestPermission() // İzin kontrolü ve isteme
-                            audioRecorder.startRecording("Geçici_Kayıt")
-                        } else {
-                            showDialog = true // Dosya adı diyalogu
-                        }
-                        isRecording = !isRecording*/
                     }
             )
         }
-
-        // Dosya adı için diyalog
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = {
                     showDialog = false
                 },
                 title = {
-                    Text("Dosya Adı")
+                    Text(
+                        text = stringResource(id = R.string.file_name)
+                    )
                 },
                 text = {
                     OutlinedTextField(
@@ -169,7 +152,11 @@ fun AudioRecorderApp(
                             fileName = it
                         }
                         },
-                        label = { Text("Dosya Adı Girin") },
+                        label = { 
+                            Text(
+                                text = stringResource(id = R.string.enter_file_name)
+                            ) 
+                                },
                         singleLine = true,
                     )
                 },
@@ -177,19 +164,21 @@ fun AudioRecorderApp(
                     Button(onClick = {
                         showDialog = false
                         if (fileName.isNotBlank()) {
-                            audioRecorder.stopRecording() // Kaydı durdur
+                            audioRecorder.stopRecording()
                             val newFileName = "$fileName.mp3"
                             val audioDir = context.getExternalFilesDir(null)
-                            val oldFile = audioRecorder.getRecordedFiles().lastOrNull() // Son kaydı alın
+                            val oldFile = audioRecorder.getRecordedFiles().lastOrNull()
                             if (oldFile != null) {
                                 val newFile = File(audioDir, newFileName)
-                                oldFile.renameTo(newFile) // Dosyayı yeniden adlandır
+                                oldFile.renameTo(newFile)
                                 recordedFiles = recordedFiles + newFile
                             }
                         }
                         isRecording = false
                     }) {
-                        Text("Tamam")
+                        Text(
+                            text = stringResource(id = R.string.okay)
+                        )
                     }
                 },
                 dismissButton = {
@@ -197,23 +186,27 @@ fun AudioRecorderApp(
                         showDialog = false
                         isRecording = false
                     }) {
-                        Text("İptal")
+                        Text(
+                            text = stringResource(id = R.string.cancel)
+                        )
                     }
                 }
             )
         }
-
-        // Dosya silme için diyalog
         fileToDelete?.let { file ->
             AlertDialog(
                 onDismissRequest = {
                     fileToDelete = null
                 },
                 title = {
-                    Text("Dosyayı Sil")
+                    Text(
+                        text = stringResource(id = R.string.delete_file)
+                    )
                 },
                 text = {
-                    Text("Bu dosyayı silmek istediğinizden emin misiniz?")
+                    Text(
+                        text = stringResource(id = R.string.delete_file_question)
+                    )
                 },
                 confirmButton = {
                     Button(onClick = {
@@ -221,14 +214,18 @@ fun AudioRecorderApp(
                         recordedFiles = recordedFiles.filter { it != file }
                         fileToDelete = null
                     }) {
-                        Text("Sil")
+                        Text(
+                            text = stringResource(id = R.string.delete)
+                        )
                     }
                 },
                 dismissButton = {
                     Button(onClick = {
                         fileToDelete = null
                     }) {
-                        Text("İptal")
+                        Text(
+                            text = stringResource(id = R.string.cancel)
+                        )
                     }
                 }
             )

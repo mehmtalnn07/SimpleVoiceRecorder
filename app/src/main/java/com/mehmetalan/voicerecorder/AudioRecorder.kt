@@ -39,7 +39,7 @@ class AudioRecorder(private val context: Context) {
     }
 
     fun startPlaying(file: File) {
-        stopPlaying() // Önce çalmakta olan ses varsa durdur
+        stopPlaying()
         mediaPlayer = MediaPlayer().apply {
             setDataSource(file.absolutePath)
             prepare()

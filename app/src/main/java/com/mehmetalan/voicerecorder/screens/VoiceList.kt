@@ -34,13 +34,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.navOptions
 import com.mehmetalan.voicerecorder.AudioRecorder
-import org.w3c.dom.Text
+import com.mehmetalan.voicerecorder.R
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,8 +51,6 @@ fun VoiceList(
 ) {
     val context = LocalContext.current
     val audioRecorder = remember { AudioRecorder(context) }
-
-    // Kaydedilen dosyaları izlemek için yerel state
     var recordedFiles by remember { mutableStateOf(audioRecorder.getRecordedFiles()) }
     var fileToDelete by remember { mutableStateOf<File?>(null) }
     var isPlaying by remember { mutableStateOf(false) }
@@ -62,7 +60,7 @@ fun VoiceList(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Ses Kayıtları"
+                        text = stringResource(id = R.string.voice_list)
                     )
                 },
                 navigationIcon = {
@@ -94,7 +92,7 @@ fun VoiceList(
             ) {
                 if(recordedFiles.isEmpty()) {
                     Text(
-                        text = "Ses kaydınız bulunmamaktadır.",
+                        text = stringResource(id = R.string.empty_list),
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 30.sp
                     )
@@ -131,7 +129,9 @@ fun VoiceList(
                                             contentDescription = "Play Button"
                                         )
                                     }
-                                    Text(text = file.name)
+                                    Text(
+                                        text = file.name
+                                    )
                                 }
                                 IconButton(
                                     onClick = {
@@ -158,7 +158,7 @@ fun VoiceList(
                 },
                 title = {
                     Text(
-                        text = "Dosyayı sil"
+                        text = stringResource(id = R.string.delete_file)
                     )
                 },
                 confirmButton = {
@@ -170,7 +170,7 @@ fun VoiceList(
                         }
                     ) {
                         Text(
-                            text = "Sil"
+                            text = stringResource(id = R.string.delete)
                         )
                     }
                 },
@@ -181,7 +181,7 @@ fun VoiceList(
                         }
                     ) {
                         Text(
-                            text = "İptal"
+                            text = stringResource(id = R.string.cancel)
                         )
                     }
                 }
